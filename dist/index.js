@@ -1984,15 +1984,16 @@ function (_React$Component) {
     value: function render() {
       var _this = this;
 
-      return React__default.createElement(ReactNative.TouchableOpacity, {
-        style: [styles$e.container, this.props.containerStyle],
+      return React__default.createElement(TouchableOpacity, {
+        style: _objectSpread({}, styles$e.container, this.props.containerStyle),
         onPress: function onPress() {
           if (_this.props.onLoadEarlier) {
             _this.props.onLoadEarlier();
           }
         },
         disabled: this.props.isLoadingEarlier === true,
-        accessibilityTraits: "button"
+        accessibilityTraits: "button",
+        accessible: true
       }, React__default.createElement(ReactNative.View, {
         style: [styles$e.wrapper, this.props.wrapperStyle]
       }, this.renderLoading()));
@@ -2004,7 +2005,7 @@ function (_React$Component) {
 var styles$e = ReactNative.StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 10,
     marginBottom: 10
   },
   wrapper: {
