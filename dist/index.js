@@ -962,7 +962,7 @@ function (_React$Component) {
         }, {
           type: 'phone',
           style: linkStyle,
-          onPress: this.onPhonePress
+          onPress: null
         }, {
           type: 'email',
           style: linkStyle,
@@ -1461,7 +1461,7 @@ function (_React$Component) {
         withoutFeedback: true,
         onLongPress: this.onLongPress,
         accessibilityTraits: "text"
-      }, this.props.touchableProps), React__default.createElement(ReactNative.View, null, this.renderCustomView(), this.renderMessageImage(), this.renderMessageVideo(), this.renderMessageText(), React__default.createElement(ReactNative.View, {
+      }, this.props.touchableProps), React__default.createElement(ReactNative.View, null, this.renderMessageImage(), this.renderMessageVideo(), this.renderMessageText(),this.renderCustomView(), React__default.createElement(ReactNative.View, {
         style: [styles$8[this.props.position].bottom, this.props.bottomContainerStyle[this.props.position]]
       }, this.renderUsername(), this.renderTime(), this.renderTicks())))));
     }
