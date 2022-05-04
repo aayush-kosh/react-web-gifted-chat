@@ -714,6 +714,9 @@ function () {
       }];
       this.patterns.forEach(function (pattern) {
         var newParts = [];
+        var tmp = pattern.nonExhaustiveModeMaxMatchCount || 0;
+        var numberOfMatchesPermitted = Math.min(Math.max(Number.isInteger(tmp) ? tmp : 0, 0) || Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+        var currentMatches = 0;
         parsedTexts.forEach(function (parsedText) {
           // Only allow for now one parsing
           if (parsedText._matched) {
@@ -723,20 +726,31 @@ function () {
 
           var parts = [];
           var textLeft = parsedText.children;
+          var indexOfMatchedString = 0;
+          /** @type {RegExpExecArray} */
 
-          while (textLeft) {
-            var matches = pattern.pattern.exec(textLeft);
+          var matches; // Global RegExps are stateful, this makes it start at 0 if reused
+          // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec
 
-            if (!matches) {
+          pattern.pattern.lastIndex = 0;
+
+          while (textLeft && (matches = pattern.pattern.exec(textLeft))) {
+            var previousText = textLeft.substr(0, matches.index);
+            indexOfMatchedString = matches.index;
+
+            if (++currentMatches > numberOfMatchesPermitted) {
+              // Abort if we've exhausted our number of matches
               break;
             }
 
-            var previousText = textLeft.substr(0, matches.index);
             parts.push({
               children: previousText
             });
-            parts.push(_this.getMatchedPart(pattern, matches[0], matches));
+            parts.push(_this.getMatchedPart(pattern, matches[0], matches, indexOfMatchedString));
             textLeft = textLeft.substr(matches.index + matches[0].length);
+            indexOfMatchedString += matches[0].length - 1; // Global RegExps are stateful, this makes it operate on the "remainder" of the string
+
+            pattern.pattern.lastIndex = 0;
           }
 
           parts.push({
@@ -797,6 +811,7 @@ function () {
 }();
 
 var PATTERNS = {
+  mention: /((.)\[([^[]*)]\(([^(^)]*)\))/gi,
   url: /(https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/i,
   phone: /[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}/,
   email: /\S+@\S+\.\S+/
@@ -896,6 +911,28 @@ function (_React$Component) {
     _classCallCheck(this, MessageText);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MessageText).call(this, props));
+
+    _this.renderText = function (matchingString, matches) {
+      var _this$props = _this.props,
+          members = _this$props.members,
+          profile = _this$props.profile;
+      var name = matches[4];
+
+      if (profile && profile.username == name) {
+        name = profile.name;
+      } else {
+        var user = members.find(function (user) {
+          return user.id == matches[4];
+        });
+
+        if (user) {
+          name = user.display;
+        }
+      }
+
+      return "".concat(matches[2]).concat(name);
+    };
+
     _this.onUrlPress = _this.onUrlPress.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onPhonePress = _this.onPhonePress.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onEmailPress = _this.onEmailPress.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -928,20 +965,19 @@ function (_React$Component) {
   }, {
     key: "onPhonePress",
     value: function onPhonePress(phone) {
-      var options = ['Call', 'Text', 'Cancel'];
-      var cancelButtonIndex = options.length - 1;
-      this.context.actionSheet().showActionSheetWithOptions({
-        options: options,
-        cancelButtonIndex: cancelButtonIndex
-      }, function (buttonIndex) {// switch (buttonIndex) {
-        //   case 0:
-        //     Communications.phonecall(phone, true);
-        //     break;
-        //   case 1:
-        //     Communications.text(phone);
-        //     break;
-        // }
-      });
+      //   options,
+      //   cancelButtonIndex,
+      // },
+      // (buttonIndex) => {
+      //   // switch (buttonIndex) {
+      //   //   case 0:
+      //   //     Communications.phonecall(phone, true);
+      //   //     break;
+      //   //   case 1:
+      //   //     Communications.text(phone);
+      //   //     break;
+      //   // }
+      // });
     }
   }, {
     key: "onEmailPress",
@@ -956,13 +992,18 @@ function (_React$Component) {
       }, React__default.createElement(ParsedText, {
         style: [styles$4[this.props.position].text, this.props.textStyle[this.props.position], this.props.customTextStyle],
         parse: _toConsumableArray(this.props.parsePatterns(linkStyle)).concat([{
+          type: 'mention',
+          style: linkStyle,
+          onPress: null,
+          renderText: this.renderText
+        }, {
           type: 'url',
           style: linkStyle,
           onPress: this.onUrlPress
         }, {
           type: 'phone',
           style: linkStyle,
-          onPress: null
+          onPress: this.onPhonePress
         }, {
           type: 'email',
           style: linkStyle,
@@ -1461,7 +1502,7 @@ function (_React$Component) {
         withoutFeedback: true,
         onLongPress: this.onLongPress,
         accessibilityTraits: "text"
-      }, this.props.touchableProps), React__default.createElement(ReactNative.View, null, this.renderMessageImage(), this.renderMessageVideo(), this.renderMessageText(),this.renderCustomView(), React__default.createElement(ReactNative.View, {
+      }, this.props.touchableProps), React__default.createElement(ReactNative.View, null, this.renderMessageImage(), this.renderMessageVideo(), this.renderMessageText(), this.renderCustomView(), React__default.createElement(ReactNative.View, {
         style: [styles$8[this.props.position].bottom, this.props.bottomContainerStyle[this.props.position]]
       }, this.renderUsername(), this.renderTime(), this.renderTicks())))));
     }
