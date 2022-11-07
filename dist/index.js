@@ -1817,7 +1817,6 @@ function Send(_ref) {
       accessibilityLabel: "send",
       style: _objectSpread({}, styles$c.container, containerStyle),
       onPress: function onPress() {
-        console.log('asdasdasd');
         onSend({
           text: text.trim()
         }, true);
@@ -2265,6 +2264,7 @@ function (_Component) {
       }
 
       return React__default.createElement("div", {
+        ref: this.props.forwardRef,
         style: styles$g.container
       }, ListHeaderComponent(), messages.map(this.renderItem), ListFooterComponent());
     }
@@ -2447,6 +2447,7 @@ function (_React$PureComponent) {
         onLayout: function onLayout() {// this.flatListRef.current.scrollTo({x: 0, y: 0, animated: true});
         }
       }, this.state.showScrollBottom && this.props.scrollToBottom ? this.renderScrollToBottomWrapper() : null, React__default.createElement(WebScrollView, {
+        forwardRef: this.props.getRef,
         ref: this.flatListRef,
         keyExtractor: this.keyExtractor,
         extraData: this.props.extraData,
@@ -2689,15 +2690,14 @@ function (_React$Component) {
   }, {
     key: "scrollToBottom",
     value: function scrollToBottom() {
-      var animated = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
       if (this._messageContainerRef === null) {
         return;
       }
 
       this._messageContainerRef.scrollTo({
-        y: 0,
-        animated: animated
+        top: 0,
+        behavior: 'smooth'
       });
     }
   }, {
@@ -2713,7 +2713,7 @@ function (_React$Component) {
       }, React__default.createElement(MessageContainer, Object.assign({}, this.props, {
         invertibleScrollViewProps: this.invertibleScrollViewProps,
         messages: this.getMessages(),
-        ref: function ref(component) {
+        getRef: function getRef(component) {
           return _this2._messageContainerRef = component;
         }
       })), this.renderChatFooter());
