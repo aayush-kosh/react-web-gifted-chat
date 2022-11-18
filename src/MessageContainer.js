@@ -92,7 +92,9 @@ export default class MessageContainer extends React.PureComponent {
     if (this.props.renderMessage) {
       return this.props.renderMessage(messageProps);
     }
-    return <Message {...messageProps} />;
+   
+      return <Message mentionedMsgId = {this.props.mentionedMsgId} {...messageProps} />;
+    
   };
 
   renderHeaderWrapper = () => <View style={styles.headerWrapper}>{this.renderLoadEarlier()}</View>;
@@ -125,9 +127,9 @@ export default class MessageContainer extends React.PureComponent {
       <View
         style={{ flex: 1 }}
         onLayout={() => {
-          // this.flatListRef.current.scrollTo({x: 0, y: 0, animated: true});
+          // this.flatListRef.current.scrollTo({x: 0, y: -200, animated: true});
         }
-      }
+        }
       >
         {this.state.showScrollBottom && this.props.scrollToBottom ? this.renderScrollToBottomWrapper() : null}
         <WebScrollView
@@ -144,6 +146,8 @@ export default class MessageContainer extends React.PureComponent {
           renderItem={this.renderRow}
           ListFooterComponent={this.renderHeaderWrapper}
           ListHeaderComponent={this.renderFooter}
+          mentionedMsgId = {this.props.mentionedMsgId}
+
         />
       </View>
     );
@@ -189,7 +193,7 @@ MessageContainer.defaultProps = {
   user: {},
   renderFooter: null,
   renderMessage: null,
-  onLoadEarlier: () => {},
+  onLoadEarlier: () => { },
   inverted: true,
   loadEarlier: false,
   listViewProps: {},

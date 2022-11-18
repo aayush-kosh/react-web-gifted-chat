@@ -186,7 +186,6 @@ class GiftedChat extends React.Component {
     this._messageContainerRef.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-
   renderMessages() {
     return (
       <div style={{

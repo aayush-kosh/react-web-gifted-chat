@@ -1495,6 +1495,7 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return React__default.createElement(ReactNative.View, {
+        id: this.props.currentMessage._id,
         style: [styles$8[this.props.position].container, this.props.containerStyle[this.props.position]]
       }, React__default.createElement(ReactNative.View, {
         style: [styles$8[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious()]
@@ -2160,7 +2161,9 @@ function (_React$Component) {
         return this.props.renderBubble(bubbleProps);
       }
 
-      return React__default.createElement(Bubble, bubbleProps);
+      return React__default.createElement(Bubble, Object.assign({
+        mentionedMsgId: this.props.mentionedMsgId
+      }, bubbleProps));
     }
   }, {
     key: "renderSystemMessage",
@@ -2190,16 +2193,29 @@ function (_React$Component) {
       return React__default.createElement(Avatar, avatarProps);
     }
   }, {
+    key: "componentDidMount",
+    value: function componentDidMount(prevProps, prevState) {
+      if (this.props.currentMessage._id == this.props.mentionedMsgId) {
+        this._msgRef.scrollIntoView(0, 0);
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       var sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
-      return React__default.createElement(ReactNative.View, null, this.renderDay(), this.props.currentMessage.system ? this.renderSystemMessage() : React__default.createElement(ReactNative.View, {
+      return React__default.createElement("div", {
+        ref: function ref(element) {
+          return _this2._msgRef = element;
+        }
+      }, React__default.createElement(ReactNative.View, null, this.renderDay(), this.props.currentMessage.system ? this.renderSystemMessage() : React__default.createElement(ReactNative.View, {
         style: [styles$f[this.props.position].container, {
           marginBottom: sameUser ? 2 : 10
         }, !this.props.inverted && {
           marginBottom: 2
         }, this.props.containerStyle[this.props.position]]
-      }, this.props.position === 'left' ? this.renderAvatar() : null, this.renderBubble(), this.props.position === 'right' ? this.renderAvatar() : null));
+      }, this.props.position === 'left' ? this.renderAvatar() : null, this.renderBubble(), this.props.position === 'right' ? this.renderAvatar() : null)));
     }
   }]);
 
@@ -2225,24 +2241,20 @@ var WebScrollView =
 function (_Component) {
   _inherits(WebScrollView, _Component);
 
-  function WebScrollView() {
-    var _getPrototypeOf2;
-
+  function WebScrollView(props) {
     var _this;
 
     _classCallCheck(this, WebScrollView);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(WebScrollView)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebScrollView).call(this, props));
 
     _this.renderItem = function (item, index) {
       var renderItem = _this.props.renderItem;
+      var msgId = _this.props.mentionedMsgId;
       return renderItem({
         item: item,
-        index: index
+        index: index,
+        msgId: msgId
       });
     };
 
@@ -2382,7 +2394,9 @@ function (_React$PureComponent) {
         return _this.props.renderMessage(messageProps);
       }
 
-      return React__default.createElement(Message, messageProps);
+      return React__default.createElement(Message, Object.assign({
+        mentionedMsgId: _this.props.mentionedMsgId
+      }, messageProps));
     };
 
     _this.renderHeaderWrapper = function () {
@@ -2444,7 +2458,7 @@ function (_React$PureComponent) {
         style: {
           flex: 1
         },
-        onLayout: function onLayout() {// this.flatListRef.current.scrollTo({x: 0, y: 0, animated: true});
+        onLayout: function onLayout() {// this.flatListRef.current.scrollTo({x: 0, y: -200, animated: true});
         }
       }, this.state.showScrollBottom && this.props.scrollToBottom ? this.renderScrollToBottomWrapper() : null, React__default.createElement(WebScrollView, {
         forwardRef: this.props.getRef,
@@ -2459,7 +2473,8 @@ function (_React$PureComponent) {
         contentContainerStyle: styles$h.contentContainerStyle,
         renderItem: this.renderRow,
         ListFooterComponent: this.renderHeaderWrapper,
-        ListHeaderComponent: this.renderFooter
+        ListHeaderComponent: this.renderFooter,
+        mentionedMsgId: this.props.mentionedMsgId
       }));
     }
   }], [{

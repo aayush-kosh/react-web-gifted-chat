@@ -154,9 +154,11 @@ export default class Bubble extends React.Component {
     return null;
   }
 
+ 
+
   render() {
     return (
-      <View style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
+      <View id = { this.props.currentMessage._id} style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
         <View
           style={[
             styles[this.props.position].wrapper,
@@ -185,6 +187,7 @@ export default class Bubble extends React.Component {
           </TouchableOpacity>
         </View>
       </View>
+   
     );
   }
 
