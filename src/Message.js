@@ -34,27 +34,6 @@ const styles = {
 
 export default class Message extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      mentionedBG:false
-    }
-  }
-
-  componentDidMount() { 
-    console.log("mention , curr",this.props.mentionedMsgId,this.props.currentMessage._id )
-    if(this.props.mentionedMsgId) {
-      this.setState({mentionedBG :true})
-    } else{
-      this.setState({mentionedBG :false})
-    }
-
-    setTimeout(() => {
-      this.setState({mentionedBG :false})
-    }, 1000);
-   }
-
-
   shouldComponentUpdate(nextProps) {
     const next = nextProps.currentMessage;
     const current = this.props.currentMessage;
