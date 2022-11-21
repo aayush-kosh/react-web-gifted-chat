@@ -17,7 +17,28 @@ import { isSameUser, isSameDay } from './utils';
 import TouchableOpacity from './TouchableOpacity';
 
 export default class Bubble extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      mentionedBG:false
+    }
+  }
 
+  componentDidMount() { 
+    console.log("mention , curr",this.props.mentionedMsgId,this.props.currentMessage._id )
+    if(this.props.mentionedMsgId) {
+      this.setState({mentionedBG :true})
+    } else{
+      this.setState({mentionedBG :false})
+    }
+
+    setTimeout(() => {
+      this.setState({mentionedBG :false})
+    }, 1000);
+
+   }
+
+  
   onLongPress = () => {
     if (this.props.onLongPress) {
       this.props.onLongPress(this.context, this.props.currentMessage);
@@ -153,9 +174,7 @@ export default class Bubble extends React.Component {
     }
     return null;
   }
-
- 
-
+  
   render() {
     return (
       <View id = { this.props.currentMessage._id} style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
@@ -165,6 +184,7 @@ export default class Bubble extends React.Component {
             this.props.wrapperStyle[this.props.position],
             this.handleBubbleToNext(),
             this.handleBubbleToPrevious(),
+            {backgroundColor:this.props.mentionedMsgId==this.props.currentMessage._id && this.state.mentionedBG?"#8ad1be":'white' }
           ]}
         >
           <TouchableOpacity
@@ -187,10 +207,8 @@ export default class Bubble extends React.Component {
           </TouchableOpacity>
         </View>
       </View>
-   
     );
   }
-
 }
 
 const styles = {

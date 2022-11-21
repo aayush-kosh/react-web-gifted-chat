@@ -1307,18 +1307,12 @@ var Bubble =
 function (_React$Component) {
   _inherits(Bubble, _React$Component);
 
-  function Bubble() {
-    var _getPrototypeOf2;
-
+  function Bubble(props) {
     var _this;
 
     _classCallCheck(this, Bubble);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Bubble)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Bubble).call(this, props));
 
     _this.onLongPress = function () {
       if (_this.props.onLongPress) {
@@ -1343,10 +1337,36 @@ function (_React$Component) {
       }
     };
 
+    _this.state = {
+      mentionedBG: false
+    };
     return _this;
   }
 
   _createClass(Bubble, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      console.log("mention , curr", this.props.mentionedMsgId, this.props.currentMessage._id);
+
+      if (this.props.mentionedMsgId) {
+        this.setState({
+          mentionedBG: true
+        });
+      } else {
+        this.setState({
+          mentionedBG: false
+        });
+      }
+
+      setTimeout(function () {
+        _this2.setState({
+          mentionedBG: false
+        });
+      }, 1000);
+    }
+  }, {
     key: "handleBubbleToNext",
     value: function handleBubbleToNext() {
       if (isSameUser(this.props.currentMessage, this.props.nextMessage) && isSameDay(this.props.currentMessage, this.props.nextMessage)) {
@@ -1498,7 +1518,9 @@ function (_React$Component) {
         id: this.props.currentMessage._id,
         style: [styles$8[this.props.position].container, this.props.containerStyle[this.props.position]]
       }, React__default.createElement(ReactNative.View, {
-        style: [styles$8[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious()]
+        style: [styles$8[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious(), {
+          backgroundColor: this.props.mentionedMsgId == this.props.currentMessage._id && this.state.mentionedBG ? "#8ad1be" : 'white'
+        }]
       }, React__default.createElement(TouchableOpacity, Object.assign({
         withoutFeedback: true,
         onLongPress: this.onLongPress,
@@ -2103,18 +2125,12 @@ var Message =
 function (_React$Component) {
   _inherits(Message, _React$Component);
 
-  function Message() {
-    var _getPrototypeOf2;
-
+  function Message(_props) {
     var _this;
 
     _classCallCheck(this, Message);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Message)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Message).call(this, _props));
 
     _this.getInnerComponentProps = function () {
       var _this$props = _this.props,
@@ -2127,10 +2143,36 @@ function (_React$Component) {
       });
     };
 
+    _this.state = {
+      mentionedBG: false
+    };
     return _this;
   }
 
   _createClass(Message, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      console.log("mention , curr", this.props.mentionedMsgId, this.props.currentMessage._id);
+
+      if (this.props.mentionedMsgId) {
+        this.setState({
+          mentionedBG: true
+        });
+      } else {
+        this.setState({
+          mentionedBG: false
+        });
+      }
+
+      setTimeout(function () {
+        _this2.setState({
+          mentionedBG: false
+        });
+      }, 1000);
+    }
+  }, {
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(nextProps) {
       var next = nextProps.currentMessage;
@@ -2202,12 +2244,12 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       var sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
       return React__default.createElement("div", {
         ref: function ref(element) {
-          return _this2._msgRef = element;
+          return _this3._msgRef = element;
         }
       }, React__default.createElement(ReactNative.View, null, this.renderDay(), this.props.currentMessage.system ? this.renderSystemMessage() : React__default.createElement(ReactNative.View, {
         style: [styles$f[this.props.position].container, {
