@@ -20,25 +20,24 @@ export default class Bubble extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      mentionedBG:false
+      mentionedBG: false
     }
   }
 
-  componentDidMount() { 
-    console.log("mention , curr",this.props.mentionedMsgId,this.props.currentMessage._id )
-    if(this.props.mentionedMsgId) {
-      this.setState({mentionedBG :true})
-    } else{
-      this.setState({mentionedBG :false})
+  componentDidMount() {
+    if (this.props.mentionedMsgId) {
+      this.setState({ mentionedBG: true })
+    } else {
+      this.setState({ mentionedBG: false })
     }
 
     setTimeout(() => {
-      this.setState({mentionedBG :false})
+      this.setState({ mentionedBG: false })
     }, 1000);
 
-   }
+  }
 
-  
+
   onLongPress = () => {
     if (this.props.onLongPress) {
       this.props.onLongPress(this.context, this.props.currentMessage);
@@ -128,7 +127,7 @@ export default class Bubble extends React.Component {
       return this.props.renderTicks(currentMessage);
     }
     if (currentMessage.user._id !== this.props.user._id) {
-        return;
+      return;
     }
     if (currentMessage.sent || currentMessage.received || currentMessage.pending) {
       return (
@@ -174,17 +173,17 @@ export default class Bubble extends React.Component {
     }
     return null;
   }
-  
+
   render() {
     return (
-      <View id = { this.props.currentMessage._id} style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
+      <View id={this.props.currentMessage._id} style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
         <View
           style={[
             styles[this.props.position].wrapper,
             this.props.wrapperStyle[this.props.position],
             this.handleBubbleToNext(),
             this.handleBubbleToPrevious(),
-            {backgroundColor:this.props.mentionedMsgId==this.props.currentMessage._id && this.state.mentionedBG?"#8ad1be":'white' }
+            ((this.props.mentionedMsgId == this.props.currentMessage._id) && this.state.mentionedBG) && { backgroundColor: "#8ad1be" },
           ]}
         >
           <TouchableOpacity

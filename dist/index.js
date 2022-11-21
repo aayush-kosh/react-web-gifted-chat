@@ -1518,8 +1518,8 @@ function (_React$Component) {
         id: this.props.currentMessage._id,
         style: [styles$8[this.props.position].container, this.props.containerStyle[this.props.position]]
       }, React__default.createElement(ReactNative.View, {
-        style: [styles$8[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious(), {
-          backgroundColor: this.props.mentionedMsgId == this.props.currentMessage._id && this.state.mentionedBG ? "#8ad1be" : 'white'
+        style: [styles$8[this.props.position].wrapper, this.props.wrapperStyle[this.props.position], this.handleBubbleToNext(), this.handleBubbleToPrevious(), this.props.mentionedMsgId == this.props.currentMessage._id && this.state.mentionedBG && {
+          backgroundColor: "#8ad1be"
         }]
       }, React__default.createElement(TouchableOpacity, Object.assign({
         withoutFeedback: true,
