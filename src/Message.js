@@ -73,7 +73,7 @@ export default class Message extends React.Component {
     if (this.props.renderBubble) {
       return this.props.renderBubble(bubbleProps);
     }
-    return <Bubble {...bubbleProps} />;
+    return <Bubble mentionedMsgId={this.props.mentionedMsgId} {...bubbleProps}  />;
   }
 
   renderSystemMessage() {
@@ -96,9 +96,17 @@ export default class Message extends React.Component {
     return <Avatar {...avatarProps} />;
   }
 
+
+  componentDidMount(prevProps, prevState) {
+    if (this.props.currentMessage._id == this.props.mentionedMsgId){
+      this._msgRef.scrollIntoView(0,0)
+    } 
+  }
+
   render() {
     const sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
     return (
+      <div ref ={element => this._msgRef = element }>
       <View>
         {this.renderDay()}
         {this.props.currentMessage.system ? (
@@ -118,6 +126,7 @@ export default class Message extends React.Component {
           </View>
         )}
       </View>
+      </div>
     );
   }
 

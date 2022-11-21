@@ -4,9 +4,14 @@ import React, { Component } from 'react';
 import { FlatList, View, StyleSheet, Keyboard, TouchableOpacity, Text } from 'react-native';
 
 export default class WebScrollView extends Component {
+  constructor(props) {
+    super(props)
+  }
+
   renderItem = (item, index) => {
     const { renderItem } = this.props;
-    return renderItem({ item, index });
+    const msgId = this.props.mentionedMsgId
+    return renderItem({ item, index , msgId});
   }
 
   render() {
