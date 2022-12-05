@@ -98,15 +98,25 @@ export default class Message extends React.Component {
 
 
   componentDidMount(prevProps, prevState) {
-    if (this.props.currentMessage._id == this.props.mentionedMsgId){
-      this._msgRef.scrollIntoView(0,0)
-    } 
+    // this.scroll()
+  }
+
+  scroll =()=> {
+    console.log("msg ref compare ----",this.props.currentMessage._id == this.props.mentionedMsgId, this.props.currentMessage._id ,this.props.mentionedMsgId)
+    setTimeout(() => {
+      if (this.props.currentMessage._id == this.props.mentionedMsgId){
+        this._msgRef.scrollIntoView(0,0)
+        console.log("msg ref----",this._msgRef)
+      } 
+    }, 1000);
   }
 
   render() {
     const sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
     return (
-      <div ref ={element => this._msgRef = element }>
+      <div 
+      ref ={element => this._msgRef = element }
+       >
       <View>
         {this.renderDay()}
         {this.props.currentMessage.system ? (

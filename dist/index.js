@@ -10,6 +10,7 @@ var PropTypes = _interopDefault(require('prop-types'));
 var moment = _interopDefault(require('moment'));
 var React = require('react');
 var React__default = _interopDefault(React);
+var reactVirtualized = require('react-virtualized');
 var ReactNative = require('react-native');
 var ReactNative__default = _interopDefault(ReactNative);
 
@@ -1348,8 +1349,6 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      console.log("mention , curr", this.props.mentionedMsgId, this.props.currentMessage._id);
-
       if (this.props.mentionedMsgId) {
         this.setState({
           mentionedBG: true
@@ -2125,12 +2124,18 @@ var Message =
 function (_React$Component) {
   _inherits(Message, _React$Component);
 
-  function Message(_props) {
+  function Message() {
+    var _getPrototypeOf2;
+
     var _this;
 
     _classCallCheck(this, Message);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Message).call(this, _props));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Message)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _this.getInnerComponentProps = function () {
       var _this$props = _this.props,
@@ -2143,36 +2148,21 @@ function (_React$Component) {
       });
     };
 
-    _this.state = {
-      mentionedBG: false
+    _this.scroll = function () {
+      console.log("msg ref compare ----", _this.props.currentMessage._id == _this.props.mentionedMsgId, _this.props.currentMessage._id, _this.props.mentionedMsgId);
+      setTimeout(function () {
+        if (_this.props.currentMessage._id == _this.props.mentionedMsgId) {
+          _this._msgRef.scrollIntoView(0, 0);
+
+          console.log("msg ref----", _this._msgRef);
+        }
+      }, 1000);
     };
+
     return _this;
   }
 
   _createClass(Message, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var _this2 = this;
-
-      console.log("mention , curr", this.props.mentionedMsgId, this.props.currentMessage._id);
-
-      if (this.props.mentionedMsgId) {
-        this.setState({
-          mentionedBG: true
-        });
-      } else {
-        this.setState({
-          mentionedBG: false
-        });
-      }
-
-      setTimeout(function () {
-        _this2.setState({
-          mentionedBG: false
-        });
-      }, 1000);
-    }
-  }, {
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(nextProps) {
       var next = nextProps.currentMessage;
@@ -2236,20 +2226,17 @@ function (_React$Component) {
     }
   }, {
     key: "componentDidMount",
-    value: function componentDidMount(prevProps, prevState) {
-      if (this.props.currentMessage._id == this.props.mentionedMsgId) {
-        this._msgRef.scrollIntoView(0, 0);
-      }
+    value: function componentDidMount(prevProps, prevState) {// this.scroll()
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
       var sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
       return React__default.createElement("div", {
         ref: function ref(element) {
-          return _this3._msgRef = element;
+          return _this2._msgRef = element;
         }
       }, React__default.createElement(ReactNative.View, null, this.renderDay(), this.props.currentMessage.system ? this.renderSystemMessage() : React__default.createElement(ReactNative.View, {
         style: [styles$f[this.props.position].container, {
@@ -2300,12 +2287,19 @@ function (_Component) {
       });
     };
 
+    _this.cache = React__default.createRef();
+    _this.cache = new reactVirtualized.CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 200
+    });
     return _this;
   }
 
   _createClass(WebScrollView, [{
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       var _this$props = this.props,
           ListHeaderComponent = _this$props.ListHeaderComponent,
           ListFooterComponent = _this$props.ListFooterComponent,
@@ -2318,9 +2312,46 @@ function (_Component) {
       }
 
       return React__default.createElement("div", {
-        ref: this.props.forwardRef,
         style: styles$g.container
-      }, ListHeaderComponent(), messages.map(this.renderItem), ListFooterComponent());
+      }, ListHeaderComponent(), React__default.createElement("div", {
+        style: {
+          width: "100%",
+          height: "100vh"
+        },
+        className: "test-class1"
+      }, React__default.createElement(reactVirtualized.AutoSizer, null, function (_ref) {
+        var width = _ref.width,
+            height = _ref.height;
+        console.log("height-----", height);
+        return React__default.createElement("div", {
+          style: {
+            height: '100%'
+          }
+        }, React__default.createElement(reactVirtualized.List, {
+          ref: _this2.props.forwardRef,
+          width: width,
+          height: height,
+          rowHeight: _this2.cache.rowHeight,
+          deferredMeasurementCache: _this2.cache,
+          rowCount: messages.length,
+          scrollToIndex: messages.length,
+          rowRenderer: function rowRenderer(_ref2) {
+            var key = _ref2.key,
+                index = _ref2.index,
+                style = _ref2.style,
+                parent = _ref2.parent;
+            return React__default.createElement(reactVirtualized.CellMeasurer, {
+              key: key,
+              cache: _this2.cache,
+              parent: parent,
+              columnIndex: 0,
+              rowIndex: index
+            }, React__default.createElement("div", {
+              style: style
+            }, _this2.renderItem(messages[messages.length - (index + 1)], messages.length - (index + 1), height)));
+          }
+        }));
+      })), ListFooterComponent());
     }
   }]);
 
@@ -2417,11 +2448,13 @@ function (_React$PureComponent) {
 
       var _this$props = _this.props,
           messages = _this$props.messages,
-          restProps = _objectWithoutProperties(_this$props, ["messages"]);
+          restProps = _objectWithoutProperties(_this$props, ["messages"]); // const previousMessage = messages[index + 1] || {};  // 2   3
+      // const nextMessage = messages[index - 1] || {};  // 2    1
 
-      var previousMessage = messages[index + 1] || {};
-      var nextMessage = messages[index - 1] || {};
+
       var imageMessages = _this.state.imageMessages;
+      var previousMessage = (_this.props.inverted ? messages[index + 1] : messages[index - 1]) || {};
+      var nextMessage = (_this.props.inverted ? messages[index - 1] : messages[index + 1]) || {};
 
       var messageProps = _objectSpread({}, restProps, {
         key: item._id,
@@ -2597,6 +2630,26 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(GiftedChat).call(this, props)); // default values
 
+    _this.scrollToMentioned = function () {
+      setTimeout(function () {
+        if (_this.props.mentionedMsgId) {
+          var mentioned = _this.props.mentionedMsgId;
+
+          var ind = _this.props.messages.findIndex(function (item, ind) {
+            return item._id == mentioned;
+          });
+
+          if (ind > -1) {
+            var finalInd = !_this.props.inverted ? ind : _this.props.messages.length - ind; // this.setState({finalInd})
+            // console.log("ind passing in row --------", ind, this.props.messages.length - ind)
+
+            _this._messageContainerRef.scrollToRow(finalInd); // console.log("ref----",this._messageContainerRef.props)
+
+          }
+        }
+      }, 100);
+    };
+
     _this._isMounted = false;
     _this._keyboardHeight = 0;
     _this._bottomOffset = 0;
@@ -2746,21 +2799,39 @@ function (_React$Component) {
     }
   }, {
     key: "scrollToBottom",
-    value: function scrollToBottom() {
+    value: function scrollToBottom(length) {
+      var _this2 = this;
 
       if (this._messageContainerRef === null) {
         return;
       }
 
-      this._messageContainerRef.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      setTimeout(function () {
+        _this2._messageContainerRef.scrollToRow(length + 1); // this._messageContainerRef.scrollTo({ top: 0, behavior: 'smooth' })
+
+      }, 0);
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      console.log("CDM ---"); // checking mentioned msg id tyo navigate 
+
+      this.scrollToMentioned();
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps, prevState) {
+      //  this.scrollToMentioned()
+      console.log("CDU----", prevProps.messages.length, this.props.messages.length);
+
+      if (prevProps.messages.length !== this.props.messages.length) {
+        this._messageContainerRef.scrollToRow(this.props.messages.length);
+      }
     }
   }, {
     key: "renderMessages",
     value: function renderMessages() {
-      var _this2 = this;
+      var _this3 = this;
 
       return React__default.createElement("div", {
         style: {
@@ -2771,14 +2842,14 @@ function (_React$Component) {
         invertibleScrollViewProps: this.invertibleScrollViewProps,
         messages: this.getMessages(),
         getRef: function getRef(component) {
-          return _this2._messageContainerRef = component;
+          return _this3._messageContainerRef = component;
         }
       })), this.renderChatFooter());
     }
   }, {
     key: "onSend",
     value: function onSend() {
-      var _this3 = this;
+      var _this4 = this;
 
       var messages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
       var shouldResetInputToolbar = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
@@ -2789,9 +2860,9 @@ function (_React$Component) {
 
       messages = messages.map(function (message) {
         return _objectSpread({}, message, {
-          user: _this3.props.user,
+          user: _this4.props.user,
           createdAt: new Date(),
-          id: _this3.props.messageIdGenerator()
+          id: _this4.props.messageIdGenerator()
         });
       });
 
@@ -2801,12 +2872,11 @@ function (_React$Component) {
       }
 
       this.props.onSend(messages);
-      this.scrollToBottom();
 
       if (shouldResetInputToolbar === true) {
         setTimeout(function () {
-          if (_this3.getIsMounted() === true) {
-            _this3.setIsTypingDisabled(false);
+          if (_this4.getIsMounted() === true) {
+            _this4.setIsTypingDisabled(false);
           }
         }, 100);
       }
@@ -2875,7 +2945,7 @@ function (_React$Component) {
   }, {
     key: "renderInputToolbar",
     value: function renderInputToolbar() {
-      var _this4 = this;
+      var _this5 = this;
 
       var inputToolbarProps = _objectSpread({}, this.props, {
         text: this.getTextFromProp(this.state.text),
@@ -2885,7 +2955,7 @@ function (_React$Component) {
         onTextChanged: this.onInputTextChanged,
         textInputProps: _objectSpread({}, this.props.textInputProps, {
           ref: function ref(textInput) {
-            return _this4.textInput = textInput;
+            return _this5.textInput = textInput;
           },
           maxLength: this.getIsTypingDisabled() ? 0 : this.props.maxInputLength
         })

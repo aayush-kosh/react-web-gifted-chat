@@ -60,6 +60,7 @@
     "react-dom": "^16.6.3",
     "react-image-lightbox": "^5.1.0",
     "react-native-web": "0.9.9",
+    "react-virtualized": "^9.22.3",
     "shallowequal": "1.1.0",
     "uuid": "3.3.2"
   },

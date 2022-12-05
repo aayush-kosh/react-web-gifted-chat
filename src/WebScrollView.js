@@ -1,17 +1,31 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List
+} from "react-virtualized";
 
 import { FlatList, View, StyleSheet, Keyboard, TouchableOpacity, Text } from 'react-native';
 
 export default class WebScrollView extends Component {
   constructor(props) {
     super(props)
+
+    this.cache = React.createRef()
+
+    this.cache = new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 200
+    })
+
   }
 
   renderItem = (item, index) => {
     const { renderItem } = this.props;
     const msgId = this.props.mentionedMsgId
-    return renderItem({ item, index , msgId});
+    return renderItem({ item, index, msgId });
   }
 
   render() {
@@ -22,11 +36,49 @@ export default class WebScrollView extends Component {
     }
     return (
       <div
-        ref={this.props.forwardRef}
         style={styles.container}
       >
         {ListHeaderComponent()}
-        {messages.map(this.renderItem)}
+
+        <div style={{ width: "100%", height: "100vh" }} className="test-class1">
+          <AutoSizer>
+            {({ width, height }) => {
+              console.log("height-----",height)
+              return (
+                <div
+                  style={{ height: '100%' }}
+                >
+                  <List
+                    ref={this.props.forwardRef}
+                    width={width}
+                    height={height}
+                    rowHeight={this.cache.rowHeight}
+                    deferredMeasurementCache={this.cache}
+                    rowCount={messages.length}
+                    scrollToIndex={messages.length}
+                    rowRenderer={({ key, index, style, parent }) => {
+                      return (
+                        <CellMeasurer
+                          key={key}
+                          cache={this.cache}
+                          parent={parent}
+                          columnIndex={0}
+                          rowIndex={index}
+                        >
+                          <div style={style} >
+                            {this.renderItem(messages[messages.length-(index+1)], messages.length-(index+1), height)}
+                          </div>
+                        </CellMeasurer>
+                      );
+                    }}
+                  />
+                </div>
+              );
+            }}
+          </AutoSizer>
+        </div>
+
+        {/* {messages.map(this.renderItem)} */}
         {ListFooterComponent()}
       </div>
     );

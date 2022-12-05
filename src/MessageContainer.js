@@ -75,9 +75,14 @@ export default class MessageContainer extends React.PureComponent {
       item.user = {};
     }
     const { messages, ...restProps } = this.props;
-    const previousMessage = messages[index + 1] || {};
-    const nextMessage = messages[index - 1] || {};
+    // const previousMessage = messages[index + 1] || {};  // 2   3
+    // const nextMessage = messages[index - 1] || {};  // 2    1
     const { imageMessages } = this.state;
+
+    const previousMessage =
+        (this.props.inverted ? messages[index + 1] : messages[index - 1]) || {}
+      const nextMessage =
+        (this.props.inverted ? messages[index - 1] : messages[index + 1]) || {}
 
     const messageProps = {
       ...restProps,
@@ -147,7 +152,6 @@ export default class MessageContainer extends React.PureComponent {
           ListFooterComponent={this.renderHeaderWrapper}
           ListHeaderComponent={this.renderFooter}
           mentionedMsgId = {this.props.mentionedMsgId}
-
         />
       </View>
     );

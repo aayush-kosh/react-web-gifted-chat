@@ -179,11 +179,43 @@ class GiftedChat extends React.Component {
     return this._isMounted;
   }
 
-  scrollToBottom(animated = true) {
+  scrollToBottom(length) {
     if (this._messageContainerRef === null) {
       return;
     }
-    this._messageContainerRef.scrollTo({ top: 0, behavior: 'smooth' })
+    setTimeout(() => {
+      this._messageContainerRef.scrollToRow(length + 1); // this._messageContainerRef.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 0);
+  }
+
+  componentDidMount() {
+    console.log("CDM ---")
+    // checking mentioned msg id tyo navigate 
+    this.scrollToMentioned()
+  }
+
+  scrollToMentioned = () => {
+    setTimeout(() => {
+      if (this.props.mentionedMsgId) {
+        let mentioned = this.props.mentionedMsgId
+        let ind = this.props.messages.findIndex((item, ind) => item._id == mentioned)
+        if (ind > -1) {
+          let finalInd = !this.props.inverted ? ind : this.props.messages.length - ind
+          // this.setState({finalInd})
+          // console.log("ind passing in row --------", ind, this.props.messages.length - ind)
+          this._messageContainerRef.scrollToRow(finalInd)
+          // console.log("ref----",this._messageContainerRef.props)
+        }
+      }
+    }, 100);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    //  this.scrollToMentioned()
+    console.log("CDU----", prevProps.messages.length, this.props.messages.length)
+    if (prevProps.messages.length !== this.props.messages.length) {
+      this._messageContainerRef.scrollToRow(this.props.messages.length);
+    }
   }
 
   renderMessages() {
@@ -221,7 +253,6 @@ class GiftedChat extends React.Component {
     }
 
     this.props.onSend(messages);
-    this.scrollToBottom();
 
     if (shouldResetInputToolbar === true) {
       setTimeout(() => {
