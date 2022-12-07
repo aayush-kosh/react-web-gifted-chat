@@ -98,7 +98,7 @@ export default class MessageContainer extends React.PureComponent {
       return this.props.renderMessage(messageProps);
     }
    
-      return <Message mentionedMsgId = {this.props.mentionedMsgId} {...messageProps} />;
+    return <Message mentionedMsgId = {this.props.mentionedMsgId} finalInd = {this.props.finalInd}  {...messageProps} />;
     
   };
 
@@ -152,7 +152,7 @@ export default class MessageContainer extends React.PureComponent {
           ListFooterComponent={this.renderHeaderWrapper}
           ListHeaderComponent={this.renderFooter}
           mentionedMsgId = {this.props.mentionedMsgId}
-        />
+          finalInd = {this.props.finalInd}        />
       </View>
     );
   }

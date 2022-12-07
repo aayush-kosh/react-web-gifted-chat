@@ -43,7 +43,6 @@ export default class WebScrollView extends Component {
         <div style={{ width: "100%", height: "100vh" }} className="test-class1">
           <AutoSizer>
             {({ width, height }) => {
-              console.log("height-----",height)
               return (
                 <div
                   style={{ height: '100%' }}
@@ -55,7 +54,7 @@ export default class WebScrollView extends Component {
                     rowHeight={this.cache.rowHeight}
                     deferredMeasurementCache={this.cache}
                     rowCount={messages.length}
-                    scrollToIndex={messages.length}
+                    scrollToIndex={this.props.finalInd? this.props.finalInd: messages.length}
                     rowRenderer={({ key, index, style, parent }) => {
                       return (
                         <CellMeasurer
@@ -66,7 +65,7 @@ export default class WebScrollView extends Component {
                           rowIndex={index}
                         >
                           <div style={style} >
-                            {this.renderItem(messages[messages.length-(index+1)], messages.length-(index+1), height)}
+                            {this.renderItem(messages[messages.length - (index + 1)], messages.length - (index + 1), height)}
                           </div>
                         </CellMeasurer>
                       );

@@ -24,8 +24,8 @@ export default class Bubble extends React.Component {
     }
   }
 
-  componentDidMount() {
-    if (this.props.mentionedMsgId) {
+  componentDidMount(prevProp) {
+    if (this.props.mentionedMsgId && this.props.finalInd) {
       this.setState({ mentionedBG: true })
     } else {
       this.setState({ mentionedBG: false })
@@ -33,7 +33,7 @@ export default class Bubble extends React.Component {
 
     setTimeout(() => {
       this.setState({ mentionedBG: false })
-    }, 1000);
+    }, 1500);
 
   }
 

@@ -73,7 +73,7 @@ export default class Message extends React.Component {
     if (this.props.renderBubble) {
       return this.props.renderBubble(bubbleProps);
     }
-    return <Bubble mentionedMsgId={this.props.mentionedMsgId} {...bubbleProps}  />;
+    return <Bubble mentionedMsgId={this.props.mentionedMsgId} finalInd={this.props.finalInd} {...bubbleProps} />;
   }
 
   renderSystemMessage() {
@@ -97,45 +97,41 @@ export default class Message extends React.Component {
   }
 
 
-  componentDidMount(prevProps, prevState) {
-    // this.scroll()
+  componentDidMount(prevProps, prevStat) {
+    if (this.props.currentMessage._id == this.props.mentionedMsgId) { this.scroll() }
   }
 
-  scroll =()=> {
-    console.log("msg ref compare ----",this.props.currentMessage._id == this.props.mentionedMsgId, this.props.currentMessage._id ,this.props.mentionedMsgId)
+  scroll = () => {
     setTimeout(() => {
-      if (this.props.currentMessage._id == this.props.mentionedMsgId){
-        this._msgRef.scrollIntoView(0,0)
-        console.log("msg ref----",this._msgRef)
-      } 
-    }, 1000);
+      this._msgRef && this._msgRef.scrollIntoView(0, 0)
+    }, 700);
   }
 
   render() {
     const sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
     return (
-      <div 
-      ref ={element => this._msgRef = element }
-       >
-      <View>
-        {this.renderDay()}
-        {this.props.currentMessage.system ? (
-          this.renderSystemMessage()
-        ) : (
-          <View
-            style={[
-              styles[this.props.position].container,
-              { marginBottom: sameUser ? 2 : 10 },
-              !this.props.inverted && { marginBottom: 2 },
-              this.props.containerStyle[this.props.position],
-            ]}
-          >
-            {this.props.position === 'left' ? this.renderAvatar() : null}
-            {this.renderBubble()}
-            {this.props.position === 'right' ? this.renderAvatar() : null}
-          </View>
-        )}
-      </View>
+      <div
+        ref={element => this._msgRef = element}
+      >
+        <View>
+          {this.renderDay()}
+          {this.props.currentMessage.system ? (
+            this.renderSystemMessage()
+          ) : (
+            <View
+              style={[
+                styles[this.props.position].container,
+                { marginBottom: sameUser ? 2 : 10 },
+                !this.props.inverted && { marginBottom: 2 },
+                this.props.containerStyle[this.props.position],
+              ]}
+            >
+              {this.props.position === 'left' ? this.renderAvatar() : null}
+              {this.renderBubble()}
+              {this.props.position === 'right' ? this.renderAvatar() : null}
+            </View>
+          )}
+        </View>
       </div>
     );
   }

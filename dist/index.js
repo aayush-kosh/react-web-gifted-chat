@@ -1346,10 +1346,10 @@ function (_React$Component) {
 
   _createClass(Bubble, [{
     key: "componentDidMount",
-    value: function componentDidMount() {
+    value: function componentDidMount(prevProp) {
       var _this2 = this;
 
-      if (this.props.mentionedMsgId) {
+      if (this.props.mentionedMsgId && this.props.finalInd) {
         this.setState({
           mentionedBG: true
         });
@@ -1363,7 +1363,7 @@ function (_React$Component) {
         _this2.setState({
           mentionedBG: false
         });
-      }, 1000);
+      }, 1500);
     }
   }, {
     key: "handleBubbleToNext",
@@ -2149,14 +2149,9 @@ function (_React$Component) {
     };
 
     _this.scroll = function () {
-      console.log("msg ref compare ----", _this.props.currentMessage._id == _this.props.mentionedMsgId, _this.props.currentMessage._id, _this.props.mentionedMsgId);
       setTimeout(function () {
-        if (_this.props.currentMessage._id == _this.props.mentionedMsgId) {
-          _this._msgRef.scrollIntoView(0, 0);
-
-          console.log("msg ref----", _this._msgRef);
-        }
-      }, 1000);
+        _this._msgRef && _this._msgRef.scrollIntoView(0, 0);
+      }, 700);
     };
 
     return _this;
@@ -2194,7 +2189,8 @@ function (_React$Component) {
       }
 
       return React__default.createElement(Bubble, Object.assign({
-        mentionedMsgId: this.props.mentionedMsgId
+        mentionedMsgId: this.props.mentionedMsgId,
+        finalInd: this.props.finalInd
       }, bubbleProps));
     }
   }, {
@@ -2226,7 +2222,10 @@ function (_React$Component) {
     }
   }, {
     key: "componentDidMount",
-    value: function componentDidMount(prevProps, prevState) {// this.scroll()
+    value: function componentDidMount(prevProps, prevStat) {
+      if (this.props.currentMessage._id == this.props.mentionedMsgId) {
+        this.scroll();
+      }
     }
   }, {
     key: "render",
@@ -2322,7 +2321,6 @@ function (_Component) {
       }, React__default.createElement(reactVirtualized.AutoSizer, null, function (_ref) {
         var width = _ref.width,
             height = _ref.height;
-        console.log("height-----", height);
         return React__default.createElement("div", {
           style: {
             height: '100%'
@@ -2334,7 +2332,7 @@ function (_Component) {
           rowHeight: _this2.cache.rowHeight,
           deferredMeasurementCache: _this2.cache,
           rowCount: messages.length,
-          scrollToIndex: messages.length,
+          scrollToIndex: _this2.props.finalInd ? _this2.props.finalInd : messages.length,
           rowRenderer: function rowRenderer(_ref2) {
             var key = _ref2.key,
                 index = _ref2.index,
@@ -2470,7 +2468,8 @@ function (_React$PureComponent) {
       }
 
       return React__default.createElement(Message, Object.assign({
-        mentionedMsgId: _this.props.mentionedMsgId
+        mentionedMsgId: _this.props.mentionedMsgId,
+        finalInd: _this.props.finalInd
       }, messageProps));
     };
 
@@ -2549,7 +2548,8 @@ function (_React$PureComponent) {
         renderItem: this.renderRow,
         ListFooterComponent: this.renderHeaderWrapper,
         ListHeaderComponent: this.renderFooter,
-        mentionedMsgId: this.props.mentionedMsgId
+        mentionedMsgId: this.props.mentionedMsgId,
+        finalInd: this.props.finalInd
       }));
     }
   }], [{
@@ -2640,14 +2640,14 @@ function (_React$Component) {
           });
 
           if (ind > -1) {
-            var finalInd = !_this.props.inverted ? ind : _this.props.messages.length - ind; // this.setState({finalInd})
-            // console.log("ind passing in row --------", ind, this.props.messages.length - ind)
+            var finalInd = !_this.props.inverted ? ind : _this.props.messages.length - ind;
 
-            _this._messageContainerRef.scrollToRow(finalInd); // console.log("ref----",this._messageContainerRef.props)
-
+            _this.setState({
+              finalInd: finalInd
+            });
           }
         }
-      }, 100);
+      }, 0);
     };
 
     _this._isMounted = false;
@@ -2661,7 +2661,8 @@ function (_React$Component) {
       isInitialized: false,
       // initialization will calculate maxHeight before rendering the chat
       composerHeight: 40,
-      typingDisabled: false
+      typingDisabled: false,
+      finalInd: 0
     };
     _this.onSend = _this.onSend.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.getLocale = _this.getLocale.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -2814,18 +2815,16 @@ function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      console.log("CDM ---"); // checking mentioned msg id tyo navigate 
-
+      // checking mentioned msg id to navigate 
       this.scrollToMentioned();
     }
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps, prevState) {
-      //  this.scrollToMentioned()
-      console.log("CDU----", prevProps.messages.length, this.props.messages.length);
-
+      // this.scrollToMentioned()
       if (prevProps.messages.length !== this.props.messages.length) {
-        this._messageContainerRef.scrollToRow(this.props.messages.length);
+        this._messageContainerRef.scrollToRow(this.props.messages.length); // this.setState({finalInd:0})
+
       }
     }
   }, {
@@ -2843,7 +2842,8 @@ function (_React$Component) {
         messages: this.getMessages(),
         getRef: function getRef(component) {
           return _this3._messageContainerRef = component;
-        }
+        },
+        finalInd: this.state.finalInd
       })), this.renderChatFooter());
     }
   }, {

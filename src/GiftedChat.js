@@ -55,6 +55,7 @@ class GiftedChat extends React.Component {
       isInitialized: false, // initialization will calculate maxHeight before rendering the chat
       composerHeight: 40,
       typingDisabled: false,
+      finalInd:0
     };
 
     this.onSend = this.onSend.bind(this);
@@ -189,8 +190,7 @@ class GiftedChat extends React.Component {
   }
 
   componentDidMount() {
-    console.log("CDM ---")
-    // checking mentioned msg id tyo navigate 
+    // checking mentioned msg id to navigate 
     this.scrollToMentioned()
   }
 
@@ -201,20 +201,17 @@ class GiftedChat extends React.Component {
         let ind = this.props.messages.findIndex((item, ind) => item._id == mentioned)
         if (ind > -1) {
           let finalInd = !this.props.inverted ? ind : this.props.messages.length - ind
-          // this.setState({finalInd})
-          // console.log("ind passing in row --------", ind, this.props.messages.length - ind)
-          this._messageContainerRef.scrollToRow(finalInd)
-          // console.log("ref----",this._messageContainerRef.props)
+          this.setState({finalInd})
         }
       }
-    }, 100);
+    }, 0);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //  this.scrollToMentioned()
-    console.log("CDU----", prevProps.messages.length, this.props.messages.length)
+    // this.scrollToMentioned()
     if (prevProps.messages.length !== this.props.messages.length) {
       this._messageContainerRef.scrollToRow(this.props.messages.length);
+      // this.setState({finalInd:0})
     }
   }
 
@@ -230,6 +227,7 @@ class GiftedChat extends React.Component {
           invertibleScrollViewProps={this.invertibleScrollViewProps}
           messages={this.getMessages()}
           getRef={component => this._messageContainerRef = component}
+          finalInd={this.state.finalInd}
         />
         {this.renderChatFooter()}
       </div>
