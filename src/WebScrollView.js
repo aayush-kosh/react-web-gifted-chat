@@ -17,12 +17,13 @@ export default class WebScrollView extends Component {
 
     this.cache = new CellMeasurerCache({
       fixedWidth: true,
-      defaultHeight: 200
+      defaultHeight: 400
     })
 
   }
 
   renderItem = (item, index) => {
+    // console.log(item, index)
     const { renderItem } = this.props;
     const msgId = this.props.mentionedMsgId
     return renderItem({ item, index, msgId });
@@ -34,19 +35,19 @@ export default class WebScrollView extends Component {
     if (!inverted) {
       messages = data.slice().reverse();
     }
+    console.log(messages.length)
     return (
       <div
         style={styles.container}
       >
         {ListHeaderComponent()}
-
         <div style={{ width: "100%", height: "100vh" }} className="test-class1">
           <AutoSizer>
             {({ width, height }) => {
               return (
-                <div
-                  style={{ height: '100%' }}
-                >
+                // <div
+                //   style={{ height: '100%' }}
+                // >
                   <List
                     ref={this.props.forwardRef}
                     width={width}
@@ -71,12 +72,10 @@ export default class WebScrollView extends Component {
                       );
                     }}
                   />
-                </div>
               );
             }}
           </AutoSizer>
         </div>
-
         {/* {messages.map(this.renderItem)} */}
         {ListFooterComponent()}
       </div>

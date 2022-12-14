@@ -2277,6 +2277,7 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(WebScrollView).call(this, props));
 
     _this.renderItem = function (item, index) {
+      // console.log(item, index)
       var renderItem = _this.props.renderItem;
       var msgId = _this.props.mentionedMsgId;
       return renderItem({
@@ -2310,6 +2311,7 @@ function (_Component) {
         messages = data.slice().reverse();
       }
 
+      console.log(messages.length);
       return React__default.createElement("div", {
         style: styles$g.container
       }, ListHeaderComponent(), React__default.createElement("div", {
@@ -2321,34 +2323,34 @@ function (_Component) {
       }, React__default.createElement(reactVirtualized.AutoSizer, null, function (_ref) {
         var width = _ref.width,
             height = _ref.height;
-        return React__default.createElement("div", {
-          style: {
-            height: '100%'
-          }
-        }, React__default.createElement(reactVirtualized.List, {
-          ref: _this2.props.forwardRef,
-          width: width,
-          height: height,
-          rowHeight: _this2.cache.rowHeight,
-          deferredMeasurementCache: _this2.cache,
-          rowCount: messages.length,
-          scrollToIndex: _this2.props.finalInd ? _this2.props.finalInd : messages.length,
-          rowRenderer: function rowRenderer(_ref2) {
-            var key = _ref2.key,
-                index = _ref2.index,
-                style = _ref2.style,
-                parent = _ref2.parent;
-            return React__default.createElement(reactVirtualized.CellMeasurer, {
-              key: key,
-              cache: _this2.cache,
-              parent: parent,
-              columnIndex: 0,
-              rowIndex: index
-            }, React__default.createElement("div", {
-              style: style
-            }, _this2.renderItem(messages[messages.length - (index + 1)], messages.length - (index + 1), height)));
-          }
-        }));
+        return (// <div
+          //   style={{ height: '100%' }}
+          // >
+          React__default.createElement(reactVirtualized.List, {
+            ref: _this2.props.forwardRef,
+            width: width,
+            height: height,
+            rowHeight: _this2.cache.rowHeight,
+            deferredMeasurementCache: _this2.cache,
+            rowCount: messages.length,
+            scrollToIndex: _this2.props.finalInd ? _this2.props.finalInd : messages.length,
+            rowRenderer: function rowRenderer(_ref2) {
+              var key = _ref2.key,
+                  index = _ref2.index,
+                  style = _ref2.style,
+                  parent = _ref2.parent;
+              return React__default.createElement(reactVirtualized.CellMeasurer, {
+                key: key,
+                cache: _this2.cache,
+                parent: parent,
+                columnIndex: 0,
+                rowIndex: index
+              }, React__default.createElement("div", {
+                style: style
+              }, _this2.renderItem(messages[messages.length - (index + 1)], messages.length - (index + 1), height)));
+            }
+          })
+        );
       })), ListFooterComponent());
     }
   }]);
