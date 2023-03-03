@@ -174,6 +174,13 @@ export default class Bubble extends React.Component {
     return null;
   }
 
+  renderReplyView() {
+    if (this.props.renderReplyView) {
+      return this.props.renderReplyView(this.props)
+    }
+    return null;
+  }
+
   render() {
     return (
       <View id={this.props.currentMessage._id} style={[styles[this.props.position].container, this.props.containerStyle[this.props.position]]}>
@@ -193,6 +200,7 @@ export default class Bubble extends React.Component {
             {...this.props.touchableProps}
           >
             <View>
+              {this.renderReplyView()}
               {this.renderMessageImage()}
               {this.renderMessageVideo()}
               {this.renderMessageText()}
