@@ -1348,8 +1348,6 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      console.log("mention , curr", this.props.mentionedMsgId, this.props.currentMessage._id);
-
       if (this.props.mentionedMsgId) {
         this.setState({
           mentionedBG: true
@@ -1512,6 +1510,15 @@ function (_React$Component) {
       return null;
     }
   }, {
+    key: "renderReplyView",
+    value: function renderReplyView() {
+      if (this.props.renderReplyView) {
+        return this.props.renderReplyView(this.props);
+      }
+
+      return null;
+    }
+  }, {
     key: "render",
     value: function render() {
       return React__default.createElement(ReactNative.View, {
@@ -1525,7 +1532,7 @@ function (_React$Component) {
         withoutFeedback: true,
         onLongPress: this.onLongPress,
         accessibilityTraits: "text"
-      }, this.props.touchableProps), React__default.createElement(ReactNative.View, null, this.renderMessageImage(), this.renderMessageVideo(), this.renderMessageText(), this.renderCustomView(), React__default.createElement(ReactNative.View, {
+      }, this.props.touchableProps), React__default.createElement(ReactNative.View, null, this.renderReplyView(), this.renderMessageImage(), this.renderMessageVideo(), this.renderMessageText(), this.renderCustomView(), React__default.createElement(ReactNative.View, {
         style: [styles$8[this.props.position].bottom, this.props.bottomContainerStyle[this.props.position]]
       }, this.renderUsername(), this.renderTime(), this.renderTicks())))));
     }
@@ -2125,12 +2132,18 @@ var Message =
 function (_React$Component) {
   _inherits(Message, _React$Component);
 
-  function Message(_props) {
+  function Message() {
+    var _getPrototypeOf2;
+
     var _this;
 
     _classCallCheck(this, Message);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Message).call(this, _props));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Message)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
     _this.getInnerComponentProps = function () {
       var _this$props = _this.props,
@@ -2143,36 +2156,10 @@ function (_React$Component) {
       });
     };
 
-    _this.state = {
-      mentionedBG: false
-    };
     return _this;
   }
 
   _createClass(Message, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var _this2 = this;
-
-      console.log("mention , curr", this.props.mentionedMsgId, this.props.currentMessage._id);
-
-      if (this.props.mentionedMsgId) {
-        this.setState({
-          mentionedBG: true
-        });
-      } else {
-        this.setState({
-          mentionedBG: false
-        });
-      }
-
-      setTimeout(function () {
-        _this2.setState({
-          mentionedBG: false
-        });
-      }, 1000);
-    }
-  }, {
     key: "shouldComponentUpdate",
     value: function shouldComponentUpdate(nextProps) {
       var next = nextProps.currentMessage;
@@ -2244,12 +2231,12 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
       var sameUser = isSameUser(this.props.currentMessage, this.props.nextMessage);
       return React__default.createElement("div", {
         ref: function ref(element) {
-          return _this3._msgRef = element;
+          return _this2._msgRef = element;
         }
       }, React__default.createElement(ReactNative.View, null, this.renderDay(), this.props.currentMessage.system ? this.renderSystemMessage() : React__default.createElement(ReactNative.View, {
         style: [styles$f[this.props.position].container, {
@@ -2765,7 +2752,8 @@ function (_React$Component) {
       return React__default.createElement("div", {
         style: {
           height: "calc(100% - ".concat(this.state.composerHeight, "px)"),
-          display: 'flex'
+          display: 'flex',
+          flexDirection: 'column'
         }
       }, React__default.createElement(MessageContainer, Object.assign({}, this.props, {
         invertibleScrollViewProps: this.invertibleScrollViewProps,
