@@ -76,6 +76,9 @@ export default class MessageText extends React.Component {
       if(user){
         name=user.display;
       }
+      else if(matches[3]){
+        name = matches[3]
+      }
     }
     return `${matches[2]}${name}`;
   }
