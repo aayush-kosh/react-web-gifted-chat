@@ -927,6 +927,8 @@ function (_React$Component) {
 
         if (user) {
           name = user.display;
+        } else if (matches[3]) {
+          name = matches[3];
         }
       }
 
