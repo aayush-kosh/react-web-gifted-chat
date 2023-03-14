@@ -36,7 +36,7 @@ export default class MessageText extends React.Component {
           // eslint-disable-next-line
           console.error('No handler for URL:', url);
         } else {
-          Linking.openURL(url);
+          window.open(url, '_blank');
         }
       });
     }

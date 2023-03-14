@@ -959,7 +959,7 @@ function (_React$Component) {
             // eslint-disable-next-line
             console.error('No handler for URL:', url);
           } else {
-            ReactNative.Linking.openURL(url);
+            window.open(url, '_blank');
           }
         });
       }
