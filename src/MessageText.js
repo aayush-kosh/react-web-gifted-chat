@@ -96,10 +96,11 @@ export default class MessageText extends React.Component {
           parse={[
             ...this.props.parsePatterns(linkStyle),
 
-            { type:'mention', style: linkStyle, onPress: null, renderText: this.renderText },
+            { type: 'mention', style: linkStyle, onPress: null, renderText: this.renderText },
             { type: 'url', style: linkStyle, onPress: this.onUrlPress },
             { type: 'phone', style: linkStyle, onPress: this.onPhonePress },
             { type: 'email', style: linkStyle, onPress: this.onEmailPress },
+            { type: 'bold', style: { fontWeight: 'bold' }, onPress: null },
           ]}
           childrenProps={{ ...this.props.textProps }}
         >
