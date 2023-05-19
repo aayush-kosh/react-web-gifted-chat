@@ -65,6 +65,9 @@ export default class MessageText extends React.Component {
     // Communications.email(email, null, null, null, null);
   }
 
+  renderBoldText = (matchingString, matches) => matches[1]
+  
+
   renderText = (matchingString, matches) => {
     const { members, profile } = this.props; 
     let name = matches[4]
@@ -100,7 +103,7 @@ export default class MessageText extends React.Component {
             { type: 'url', style: linkStyle, onPress: this.onUrlPress },
             { type: 'phone', style: linkStyle, onPress: this.onPhonePress },
             { type: 'email', style: linkStyle, onPress: this.onEmailPress },
-            { type: 'bold', style: { fontWeight: 'bold' }, onPress: null },
+            { type: 'bold', style: { fontWeight: 'bold' }, onPress: null, renderText: this.renderBoldText },
           ]}
           childrenProps={{ ...this.props.textProps }}
         >

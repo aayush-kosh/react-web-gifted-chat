@@ -913,6 +913,10 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MessageText).call(this, props));
 
+    _this.renderBoldText = function (matchingString, matches) {
+      return matches[1];
+    };
+
     _this.renderText = function (matchingString, matches) {
       var _this$props = _this.props,
           members = _this$props.members,
@@ -1016,7 +1020,8 @@ function (_React$Component) {
           style: {
             fontWeight: 'bold'
           },
-          onPress: null
+          onPress: null,
+          renderText: this.renderBoldText
         }]),
         childrenProps: _objectSpread({}, this.props.textProps)
       }, this.props.currentMessage.text));
